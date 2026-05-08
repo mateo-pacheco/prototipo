@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, computed, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { InventoryService } from '../../core/services/inventory.service';
 import { Product, ProductStatus } from '../../core/models/product.model';
@@ -12,10 +10,12 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { ConfirmDialogComponent } from '../../shared/ui/confirm-dialog.component';
 import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialog';
 import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
+import { buildResponsiveDialogConfig } from '../../shared/ui/dialog-config';
+import { AppDialogService } from '../../shared/ui/app-dialog.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatIconModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
+  imports: [CommonModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
@@ -26,15 +26,15 @@ import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
         class="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-500 px-4 text-sm font-semibold text-white transition hover:bg-violet-400"
         (click)="openForm()"
       >
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nuevo producto
       </button>
     </app-page-header>
 
     <section class="grid gap-4 md:grid-cols-3">
-      <app-stat-card icon="inventory_2" label="Productos" [value]="inventory.totalCount()" description="Catálogo total" />
-      <app-stat-card icon="warning" label="Stock bajo" [value]="inventory.lowStockCount()" description="Revisar reposición" badgeBackground="linear-gradient(135deg, #f59e0b, #ef4444)" />
-      <app-stat-card icon="paid" label="Valor inventario" [value]="formatMoney(inventory.totalValue())" description="Stock valorizado" badgeBackground="linear-gradient(135deg, #14b8a6, #0ea5e9)" />
+      <app-stat-card icon="fa-solid fa-box" label="Productos" [value]="inventory.totalCount()" description="Catálogo total" />
+      <app-stat-card icon="fa-solid fa-triangle-exclamation" label="Stock bajo" [value]="inventory.lowStockCount()" description="Revisar reposición" badgeBackground="linear-gradient(135deg, #f59e0b, #ef4444)" />
+      <app-stat-card icon="fa-solid fa-money-bill-wave" label="Valor inventario" [value]="formatMoney(inventory.totalValue())" description="Stock valorizado" badgeBackground="linear-gradient(135deg, #14b8a6, #0ea5e9)" />
     </section>
 
     <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
@@ -115,9 +115,9 @@ import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
                 </td>
                 <td class="px-4 py-4">
                   <div class="flex justify-end gap-2">
-                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(row)"><mat-icon class="!text-lg">visibility</mat-icon></button>
-                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(row)"><mat-icon class="!text-lg">edit</mat-icon></button>
-                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(row)"><mat-icon class="!text-lg">delete</mat-icon></button>
+                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(row)"><i class="fa-solid fa-eye text-lg"></i></button>
+                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(row)"><i class="fa-solid fa-pen text-lg"></i></button>
+                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(row)"><i class="fa-solid fa-trash text-lg"></i></button>
                   </div>
                 </td>
               </tr>
@@ -126,7 +126,7 @@ import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
         </div>
 
         <div *ngIf="filtered().length === 0" class="mt-6">
-          <app-empty-state icon="inventory_2" title="Sin productos" message="Prueba otro filtro o crea un nuevo producto."></app-empty-state>
+          <app-empty-state icon="fa-solid fa-box" title="Sin productos" message="Prueba otro filtro o crea un nuevo producto."></app-empty-state>
         </div>
       </div>
     </div>
@@ -135,7 +135,7 @@ import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
 })
 export class InventoryPage {
   readonly inventory = inject(InventoryService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(AppDialogService);
   private readonly snack = inject(MatSnackBar);
 
   readonly query = signal('');
@@ -155,7 +155,7 @@ export class InventoryPage {
 
   openForm(product?: Product) {
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '760px',
+      ...buildResponsiveDialogConfig('760px'),
       data: {
         title: product ? 'Editar producto' : 'Nuevo producto',
         subtitle: 'Mantén el catálogo ordenado y visualmente consistente.',
@@ -182,7 +182,7 @@ export class InventoryPage {
 
   detail(product: Product) {
     this.dialog.open(EntityDetailDialogComponent, {
-      width: '760px',
+      ...buildResponsiveDialogConfig('760px'),
       data: {
         title: product.nombre,
         subtitle: product.categoria,
@@ -202,7 +202,7 @@ export class InventoryPage {
 
   remove(product: Product) {
     const ref = this.dialog.open(ConfirmDialogComponent, {
-      width: '460px',
+      ...buildResponsiveDialogConfig('460px'),
       data: {
         title: 'Eliminar producto',
         message: `¿Deseas eliminar ${product.nombre}?`,

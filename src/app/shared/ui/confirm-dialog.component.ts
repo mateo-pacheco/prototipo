@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AppDialogRef } from './app-dialog.service';
 
 export interface ConfirmDialogData {
   title: string;
@@ -61,7 +62,7 @@ export interface ConfirmDialogData {
 export class ConfirmDialogComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData,
-    readonly dialogRef: MatDialogRef<ConfirmDialogComponent>
+    readonly dialogRef: AppDialogRef
   ) {}
 
   confirm() {

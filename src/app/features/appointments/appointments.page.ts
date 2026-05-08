@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AppointmentsService } from '../../core/services/appointments.service';
 import { ClientsService } from '../../core/services/clients.service';
@@ -13,24 +11,26 @@ import { PageHeaderComponent } from '../../shared/ui/page-header.component';
 import { StatCardComponent } from '../../shared/ui/stat-card.component';
 import { ConfirmDialogComponent } from '../../shared/ui/confirm-dialog.component';
 import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
+import { buildResponsiveDialogConfig } from '../../shared/ui/dialog-config';
+import { AppDialogService } from '../../shared/ui/app-dialog.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, DragDropModule, MatIconModule, PageHeaderComponent, StatCardComponent],
+  imports: [CommonModule, DragDropModule, PageHeaderComponent, StatCardComponent],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
     <app-page-header title="Citas" subtitle="Gestión de citas con tablero visual.">
       <button actions type="button" class="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-500 px-4 text-sm font-semibold text-white transition hover:bg-violet-400" (click)="openForm()">
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nueva cita
       </button>
     </app-page-header>
 
     <section class="grid gap-4 md:grid-cols-3">
-      <app-stat-card icon="event" label="Citas" [value]="appointments.appointments().length" description="Total registradas" />
-      <app-stat-card icon="pending" label="Pendientes" [value]="appointments.pendingCount()" description="Requieren confirmación" badgeBackground="linear-gradient(135deg, #f59e0b, #ef4444)" />
-      <app-stat-card icon="verified" label="Confirmadas" [value]="confirmedCount()" description="Listas para atender" badgeBackground="linear-gradient(135deg, #22c55e, #14b8a6)" />
+      <app-stat-card icon="fa-solid fa-calendar" label="Citas" [value]="appointments.appointments().length" description="Total registradas" />
+      <app-stat-card icon="fa-solid fa-clock" label="Pendientes" [value]="appointments.pendingCount()" description="Requieren confirmación" badgeBackground="linear-gradient(135deg, #f59e0b, #ef4444)" />
+      <app-stat-card icon="fa-solid fa-check" label="Confirmadas" [value]="confirmedCount()" description="Listas para atender" badgeBackground="linear-gradient(135deg, #22c55e, #14b8a6)" />
     </section>
 
     <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
@@ -53,7 +53,7 @@ import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
                   <p class="text-xs text-slate-500">{{ item.tatuadorNombre }}</p>
                 </div>
                 <button type="button" class="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(item); $event.stopPropagation()">
-                  <mat-icon class="!text-base">delete</mat-icon>
+                  <i class="fa-solid fa-trash text-base"></i>
                 </button>
               </div>
 
@@ -76,7 +76,7 @@ export class AppointmentsPage {
   readonly clients = inject(ClientsService);
   readonly artists = inject(ArtistsService);
   readonly tattoos = inject(TattooService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(AppDialogService);
   private readonly snack = inject(MatSnackBar);
   readonly lanes = ['pendiente', 'confirmada', 'cancelada', 'finalizada'] as const;
   readonly laneIds = ['pendiente', 'confirmada', 'cancelada', 'finalizada'];
@@ -114,7 +114,7 @@ export class AppointmentsPage {
     const designOptions = this.tattoos.tattoos().map((item) => ({ label: item.nombre, value: item.id }));
 
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '600px',
+      ...buildResponsiveDialogConfig('600px'),
       data: {
         title: 'Nueva cita',
         subtitle: 'Selecciona cliente, tatuador y diseño.',
@@ -135,7 +135,7 @@ export class AppointmentsPage {
       }
     });
 
-    ref.afterClosed().subscribe((value) => {
+    ref.afterClosed().subscribe((value: any) => {
       if (!value) return;
       this.appointments.save({
         ...value,
@@ -153,7 +153,7 @@ export class AppointmentsPage {
     const designOptions = this.tattoos.tattoos().map((t) => ({ label: t.nombre, value: t.id }));
 
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '600px',
+      ...buildResponsiveDialogConfig('600px'),
       data: {
         title: 'Editar cita',
         subtitle: 'Actualiza los datos de la cita.',
@@ -175,7 +175,7 @@ export class AppointmentsPage {
       }
     });
 
-    ref.afterClosed().subscribe((value) => {
+    ref.afterClosed().subscribe((value: any) => {
       if (!value) return;
       this.appointments.save({
         ...item,
@@ -191,7 +191,7 @@ export class AppointmentsPage {
   remove(item: Appointment) {
     this.dialog
       .open(ConfirmDialogComponent, {
-        width: '400px',
+        ...buildResponsiveDialogConfig('400px'),
         data: { title: 'Eliminar cita', message: `¿Eliminar la cita de ${item.clienteNombre}?`, confirmLabel: 'Eliminar', tone: 'danger' }
       })
       .afterClosed()

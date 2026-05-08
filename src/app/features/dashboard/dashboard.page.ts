@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
 import { AppointmentsService } from '../../core/services/appointments.service';
 import { ClientsService } from '../../core/services/clients.service';
 import { InventoryService } from '../../core/services/inventory.service';
@@ -10,7 +9,7 @@ import { formatMoney } from '../../core/utils/misc.util';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterLink, MatIconModule],
+  imports: [CommonModule, RouterLink],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
@@ -20,7 +19,7 @@ import { formatMoney } from '../../core/utils/misc.util';
         <div class="mt-3 flex items-end justify-between">
           <p class="text-3xl font-semibold text-white">{{ inventory.totalCount() }}</p>
           <span class="grid h-11 w-11 place-items-center rounded-2xl bg-violet-500/20 text-violet-300">
-            <mat-icon>inventory_2</mat-icon>
+            <i class="fa-solid fa-box text-xl"></i>
           </span>
         </div>
         <p class="mt-2 text-xs text-slate-500">En inventario</p>
@@ -31,7 +30,7 @@ import { formatMoney } from '../../core/utils/misc.util';
         <div class="mt-3 flex items-end justify-between">
           <p class="text-3xl font-semibold text-white">{{ inventory.lowStockCount() }}</p>
           <span class="grid h-11 w-11 place-items-center rounded-2xl bg-amber-500/20 text-amber-300">
-            <mat-icon>warning</mat-icon>
+            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
           </span>
         </div>
         <p class="mt-2 text-xs text-slate-500">Requiere reposición</p>
@@ -42,7 +41,7 @@ import { formatMoney } from '../../core/utils/misc.util';
         <div class="mt-3 flex items-end justify-between">
           <p class="text-3xl font-semibold text-white">{{ appointments.todaysAppointments().length }}</p>
           <span class="grid h-11 w-11 place-items-center rounded-2xl bg-blue-500/20 text-blue-300">
-            <mat-icon>event</mat-icon>
+            <i class="fa-solid fa-calendar text-xl"></i>
           </span>
         </div>
         <p class="mt-2 text-xs text-slate-500">Agenda del día</p>
@@ -53,7 +52,7 @@ import { formatMoney } from '../../core/utils/misc.util';
         <div class="mt-3 flex items-end justify-between">
           <p class="text-3xl font-semibold text-white">{{ formatMoney(revenue()) }}</p>
           <span class="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-500/20 text-emerald-300">
-            <mat-icon>payments</mat-icon>
+            <i class="fa-solid fa-money-bill-wave text-xl"></i>
           </span>
         </div>
         <p class="mt-2 text-xs text-slate-500">Estimado mensual</p>
@@ -62,11 +61,11 @@ import { formatMoney } from '../../core/utils/misc.util';
 
     <section class="grid gap-4 md:grid-cols-2">
       <a routerLink="/appointments" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-violet-400">
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nueva cita
       </a>
       <a routerLink="/inventory/products" class="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10">
-        <mat-icon>inventory_2</mat-icon>
+        <i class="fa-solid fa-box"></i>
         Ir a inventario
       </a>
     </section>
@@ -84,7 +83,7 @@ import { formatMoney } from '../../core/utils/misc.util';
         <div class="mt-5 space-y-3">
           <div *ngFor="let item of upcoming()" class="flex items-center gap-4 rounded-[1.4rem] border border-white/10 bg-slate-950/50 p-4">
             <div class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-violet-500/20 to-teal-400/20 text-violet-300">
-              <mat-icon>event</mat-icon>
+              <i class="fa-solid fa-calendar text-xl"></i>
             </div>
             <div class="min-w-0 flex-1">
               <p class="truncate font-medium text-white">{{ item.clienteNombre }}</p>
@@ -97,7 +96,7 @@ import { formatMoney } from '../../core/utils/misc.util';
           </div>
 
           <div *ngIf="upcoming().length === 0" class="rounded-[1.4rem] border border-dashed border-white/10 bg-slate-950/40 p-8 text-center text-slate-500">
-            <mat-icon class="!mb-2 !text-4xl">event_busy</mat-icon>
+            <i class="fa-regular fa-calendar-xmark text-4xl mb-2"></i>
             <p>No hay citas programadas</p>
           </div>
         </div>
@@ -109,7 +108,7 @@ import { formatMoney } from '../../core/utils/misc.util';
           <div class="mt-4 space-y-3">
             <div *ngFor="let item of activity()" class="flex items-center gap-3">
               <div class="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-teal-400 text-white">
-                <mat-icon class="!text-base">{{ item.icon }}</mat-icon>
+                <i [class]="item.icon + ' text-base'"></i>
               </div>
               <div class="min-w-0 flex-1">
                 <p class="truncate text-sm text-white">{{ item.title }}</p>
@@ -150,10 +149,10 @@ export class DashboardPage {
       .slice(0, 5)
   );
   readonly activity = computed(() => [
-    { icon: 'shopping_bag', title: 'Venta registrada', subtitle: 'Chompa Eclipse' },
-    { icon: 'brush', title: 'Diseño aprobado', subtitle: 'Serpiente Lunar' },
-    { icon: 'event', title: 'Cita confirmada', subtitle: 'Andrea Páez' },
-    { icon: 'inventory_2', title: 'Stock actualizado', subtitle: 'Accesorios' }
+    { icon: 'fa-solid fa-bag-shopping', title: 'Venta registrada', subtitle: 'Chompa Eclipse' },
+    { icon: 'fa-solid fa-paintbrush', title: 'Diseño aprobado', subtitle: 'Serpiente Lunar' },
+    { icon: 'fa-solid fa-calendar-check', title: 'Cita confirmada', subtitle: 'Andrea Páez' },
+    { icon: 'fa-solid fa-boxes-stacked', title: 'Stock actualizado', subtitle: 'Accesorios' }
   ]);
   readonly frequentClients = computed(() => [...this.clients.clients()].sort((a, b) => b.citas - a.citas).slice(0, 3));
 }

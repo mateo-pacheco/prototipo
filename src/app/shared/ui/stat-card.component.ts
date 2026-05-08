@@ -1,10 +1,8 @@
 import { Component, input } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-stat-card',
   standalone: true,
-  imports: [MatIconModule],
   host: { class: 'block w-full' },
   template: `
     <div class="group rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/10">
@@ -15,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
           <p class="mt-2 text-xs leading-5 text-slate-500">{{ description() }}</p>
         </div>
         <div class="grid h-12 w-12 place-items-center rounded-2xl text-white shadow-lg" [style.background]="badgeBackground()">
-          <mat-icon class="!text-xl">{{ icon() }}</mat-icon>
+          <i [class]="icon() + ' text-xl'"></i>
         </div>
       </div>
     </div>
@@ -25,6 +23,6 @@ export class StatCardComponent {
   label = input.required<string>();
   value = input.required<string | number>();
   description = input('');
-  icon = input('insights');
+  icon = input('fa-solid fa-chart-line');
   badgeBackground = input('linear-gradient(135deg, #7c3aed, #14b8a6)');
 }

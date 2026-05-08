@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ArtistsService } from '../../core/services/artists.service';
 import { Artist } from '../../core/models/artist.model';
@@ -11,24 +9,26 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { ConfirmDialogComponent } from '../../shared/ui/confirm-dialog.component';
 import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
 import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialog';
+import { buildResponsiveDialogConfig } from '../../shared/ui/dialog-config';
+import { AppDialogService } from '../../shared/ui/app-dialog.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatIconModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
+  imports: [CommonModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
     <app-page-header title="Tatuadores" subtitle="Equipo de tatuadores con especialidades y disponibilidad.">
       <button actions type="button" class="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-500 px-4 text-sm font-semibold text-white transition hover:bg-violet-400" (click)="openForm()">
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nuevo tatuador
       </button>
     </app-page-header>
 
     <section class="grid gap-4 md:grid-cols-3">
-      <app-stat-card icon="groups" label="Tatuadores" [value]="artists.artists().length" description="Equipo activo" />
-      <app-stat-card icon="event_available" label="Disponibles" [value]="artists.availableCount()" description="Listos para agenda" badgeBackground="linear-gradient(135deg, #22c55e, #14b8a6)" />
-      <app-stat-card icon="star" label="Rating medio" [value]="avgRating()" description="Calidad percibida" badgeBackground="linear-gradient(135deg, #f59e0b, #ec4899)" />
+      <app-stat-card icon="fa-solid fa-users" label="Tatuadores" [value]="artists.artists().length" description="Equipo activo" />
+      <app-stat-card icon="fa-solid fa-calendar-check" label="Disponibles" [value]="artists.availableCount()" description="Listos para agenda" badgeBackground="linear-gradient(135deg, #22c55e, #14b8a6)" />
+      <app-stat-card icon="fa-solid fa-star" label="Rating medio" [value]="avgRating()" description="Calidad percibida" badgeBackground="linear-gradient(135deg, #f59e0b, #ec4899)" />
     </section>
 
     <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
@@ -76,13 +76,13 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
 
           <div class="mt-4 flex items-center justify-between gap-3">
             <div class="flex items-center gap-4 text-sm text-slate-400">
-              <span class="flex items-center gap-1"><mat-icon class="!text-base">schedule</mat-icon> {{ artist.experiencia }} años</span>
-              <span class="flex items-center gap-1 text-amber-300"><mat-icon class="!text-base">star</mat-icon> {{ artist.rating }}</span>
+              <span class="flex items-center gap-1"><i class="fa-solid fa-clock text-base"></i> {{ artist.experiencia }} años</span>
+              <span class="flex items-center gap-1 text-amber-300"><i class="fa-solid fa-star text-base"></i> {{ artist.rating }}</span>
             </div>
             <div class="flex gap-2">
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(artist)"><mat-icon class="!text-lg">visibility</mat-icon></button>
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(artist)"><mat-icon class="!text-lg">edit</mat-icon></button>
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(artist)"><mat-icon class="!text-lg">delete</mat-icon></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(artist)"><i class="fa-solid fa-eye text-lg"></i></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(artist)"><i class="fa-solid fa-pen text-lg"></i></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(artist)"><i class="fa-solid fa-trash text-lg"></i></button>
             </div>
           </div>
 
@@ -93,7 +93,7 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
       </div>
 
       <div *ngIf="filtered().length === 0" class="mt-6">
-        <app-empty-state icon="groups" title="Sin tatuadores" message="No hay coincidencias para los filtros actuales."></app-empty-state>
+        <app-empty-state icon="fa-solid fa-users" title="Sin tatuadores" message="No hay coincidencias para los filtros actuales."></app-empty-state>
       </div>
     </div>
     </div>
@@ -101,7 +101,7 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
 })
 export class ArtistsPage {
   readonly artists = inject(ArtistsService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(AppDialogService);
   private readonly snack = inject(MatSnackBar);
   readonly query = signal('');
   readonly availability = signal('');
@@ -122,7 +122,7 @@ export class ArtistsPage {
 
   openForm(artist?: Artist) {
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '600px',
+      ...buildResponsiveDialogConfig('600px'),
       data: {
         title: artist ? 'Editar tatuador' : 'Nuevo tatuador',
         subtitle: 'Datos del tatuador.',
@@ -150,7 +150,7 @@ export class ArtistsPage {
 
   detail(artist: Artist) {
     this.dialog.open(EntityDetailDialogComponent, {
-      width: '500px',
+      ...buildResponsiveDialogConfig('500px'),
       data: {
         title: artist.nombre,
         subtitle: artist.especialidad,
@@ -168,7 +168,7 @@ export class ArtistsPage {
   remove(artist: Artist) {
     this.dialog
       .open(ConfirmDialogComponent, {
-        width: '400px',
+        ...buildResponsiveDialogConfig('400px'),
         data: { title: 'Eliminar tatuador', message: `¿Eliminar a ${artist.nombre}?`, confirmLabel: 'Eliminar', tone: 'danger' }
       })
       .afterClosed()

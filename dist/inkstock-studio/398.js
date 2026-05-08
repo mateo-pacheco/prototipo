@@ -347,9 +347,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   StatCardComponent: () => (/* binding */ StatCardComponent)
 /* harmony export */ });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 7580);
-/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/icon */ 3840);
-
-
 
 
 let StatCardComponent = /*#__PURE__*/(() => {
@@ -358,7 +355,7 @@ let StatCardComponent = /*#__PURE__*/(() => {
       this.label = _angular_core__WEBPACK_IMPORTED_MODULE_0__.input.required();
       this.value = _angular_core__WEBPACK_IMPORTED_MODULE_0__.input.required();
       this.description = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.input)('');
-      this.icon = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.input)('insights');
+      this.icon = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.input)('fa-solid fa-chart-line');
       this.badgeBackground = (0,_angular_core__WEBPACK_IMPORTED_MODULE_0__.input)('linear-gradient(135deg, #7c3aed, #14b8a6)');
     }
     static {
@@ -380,9 +377,9 @@ let StatCardComponent = /*#__PURE__*/(() => {
         },
         standalone: true,
         features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵStandaloneFeature"]],
-        decls: 12,
-        vars: 6,
-        consts: [[1, "group", "rounded-[1.75rem]", "border", "border-white/10", "bg-white/5", "p-5", "shadow-lg", "shadow-black/10", "transition", "duration-300", "hover:-translate-y-1", "hover:border-white/20", "hover:bg-white/10"], [1, "flex", "items-start", "justify-between", "gap-4"], [1, "text-sm", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "tracking-tight", "text-white"], [1, "mt-2", "text-xs", "leading-5", "text-slate-500"], [1, "grid", "h-12", "w-12", "place-items-center", "rounded-2xl", "text-white", "shadow-lg"], [1, "!text-xl"]],
+        decls: 11,
+        vars: 7,
+        consts: [[1, "group", "rounded-[1.75rem]", "border", "border-white/10", "bg-white/5", "p-5", "shadow-lg", "shadow-black/10", "transition", "duration-300", "hover:-translate-y-1", "hover:border-white/20", "hover:bg-white/10"], [1, "flex", "items-start", "justify-between", "gap-4"], [1, "text-sm", "text-slate-400"], [1, "mt-2", "text-2xl", "font-semibold", "tracking-tight", "text-white"], [1, "mt-2", "text-xs", "leading-5", "text-slate-500"], [1, "grid", "h-12", "w-12", "place-items-center", "rounded-2xl", "text-white", "shadow-lg"]],
         template: function StatCardComponent_Template(rf, ctx) {
           if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "div")(3, "p", 2);
@@ -394,9 +391,9 @@ let StatCardComponent = /*#__PURE__*/(() => {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "p", 4);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "div", 5)(10, "mat-icon", 6);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "div", 5);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "i");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
           }
           if (rf & 2) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
@@ -407,11 +404,10 @@ let StatCardComponent = /*#__PURE__*/(() => {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx.description());
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("background", ctx.badgeBackground());
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx.icon());
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx.icon() + " text-xl");
           }
         },
-        dependencies: [_angular_material_icon__WEBPACK_IMPORTED_MODULE_1__.MatIconModule, _angular_material_icon__WEBPACK_IMPORTED_MODULE_1__.MatIcon],
         encapsulation: 2
       });
     }

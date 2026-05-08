@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TattooService } from '../../core/services/tattoo.service';
 import { TattooDesign } from '../../core/models/tattoo.model';
@@ -11,25 +9,27 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { ConfirmDialogComponent } from '../../shared/ui/confirm-dialog.component';
 import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
 import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialog';
+import { buildResponsiveDialogConfig } from '../../shared/ui/dialog-config';
+import { AppDialogService } from '../../shared/ui/app-dialog.service';
 import { formatMoney, formatDateTime } from '../../core/utils/misc.util';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatIconModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
+  imports: [CommonModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
     <app-page-header title="Catálogo de tatuajes" subtitle="Diseños disponibles con precio, estilo y dificultad.">
       <button actions type="button" class="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-500 px-4 text-sm font-semibold text-white transition hover:bg-violet-400" (click)="openForm()">
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nuevo diseño
       </button>
     </app-page-header>
 
     <section class="grid gap-4 md:grid-cols-3">
-      <app-stat-card icon="brush" label="Diseños" [value]="tattoos.tattoos().length" description="Catálogo disponible" />
-      <app-stat-card icon="style" label="Estilos" [value]="tattoos.styles().length" description="Variedad creativa" badgeBackground="linear-gradient(135deg, #0ea5e9, #14b8a6)" />
-      <app-stat-card icon="schedule" label="Precio medio" [value]="formatMoney(avgPrice())" description="Estimado por diseño" badgeBackground="linear-gradient(135deg, #ec4899, #7c3aed)" />
+      <app-stat-card icon="fa-solid fa-paintbrush" label="Diseños" [value]="tattoos.tattoos().length" description="Catálogo disponible" />
+      <app-stat-card icon="fa-solid fa-palette" label="Estilos" [value]="tattoos.styles().length" description="Variedad creativa" badgeBackground="linear-gradient(135deg, #0ea5e9, #14b8a6)" />
+      <app-stat-card icon="fa-solid fa-clock" label="Precio medio" [value]="formatMoney(avgPrice())" description="Estimado por diseño" badgeBackground="linear-gradient(135deg, #ec4899, #7c3aed)" />
     </section>
 
     <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
@@ -73,14 +73,14 @@ import { formatMoney, formatDateTime } from '../../core/utils/misc.util';
             <div class="mt-4 flex gap-2">
               <button type="button" class="inline-flex flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10" (click)="detail(tattoo)">Ver</button>
               <button type="button" class="inline-flex flex-1 items-center justify-center rounded-2xl bg-violet-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-violet-400" (click)="openForm(tattoo)">Editar</button>
-              <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(tattoo)"><mat-icon class="!text-lg">delete</mat-icon></button>
+              <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(tattoo)"><i class="fa-solid fa-trash text-lg"></i></button>
             </div>
           </div>
         </article>
       </div>
 
       <div *ngIf="filtered().length === 0" class="mt-6">
-        <app-empty-state icon="brush" title="Sin diseños" message="Prueba otro filtro o crea un nuevo diseño."></app-empty-state>
+        <app-empty-state icon="fa-solid fa-paintbrush" title="Sin diseños" message="Prueba otro filtro o crea un nuevo diseño."></app-empty-state>
       </div>
     </div>
     </div>
@@ -88,7 +88,7 @@ import { formatMoney, formatDateTime } from '../../core/utils/misc.util';
 })
 export class TattoosPage {
   readonly tattoos = inject(TattooService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(AppDialogService);
   private readonly snack = inject(MatSnackBar);
   readonly query = signal('');
   readonly style = signal('');
@@ -110,7 +110,7 @@ export class TattoosPage {
 
   openForm(tattoo?: TattooDesign) {
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '600px',
+      ...buildResponsiveDialogConfig('600px'),
       data: {
         title: tattoo ? 'Editar diseño' : 'Nuevo diseño',
         subtitle: 'Datos del diseño.',
@@ -150,7 +150,7 @@ export class TattoosPage {
 
   detail(tattoo: TattooDesign) {
     this.dialog.open(EntityDetailDialogComponent, {
-      width: '500px',
+      ...buildResponsiveDialogConfig('500px'),
       data: {
         title: tattoo.nombre,
         subtitle: tattoo.estilo,
@@ -170,7 +170,7 @@ export class TattoosPage {
   remove(tattoo: TattooDesign) {
     this.dialog
       .open(ConfirmDialogComponent, {
-        width: '400px',
+        ...buildResponsiveDialogConfig('400px'),
         data: { title: 'Eliminar diseño', message: `¿Eliminar ${tattoo.nombre}?`, confirmLabel: 'Eliminar', tone: 'danger' }
       })
       .afterClosed()

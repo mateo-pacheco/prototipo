@@ -131,3 +131,26 @@ p {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.cdk-overlay-container,
+.cdk-global-overlay-wrapper,
+.cdk-overlay-pane {
+  z-index: 100000 !important;
+}
+
+.app-dialog-pane {
+  z-index: 100001 !important;
+}
+
+.cdk-overlay-backdrop {
+  z-index: 99999 !important;
+}
+
+.app-dialog-pane .mat-mdc-dialog-container {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+body.app-dialog-open {
+  overflow: hidden;
+}

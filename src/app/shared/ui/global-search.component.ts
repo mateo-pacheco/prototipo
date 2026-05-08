@@ -1,20 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { SearchService } from '../../core/services/search.service';
 
 @Component({
   selector: 'app-global-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule],
+  imports: [CommonModule, FormsModule],
   host: { class: 'block w-full' },
   template: `
     <div class="relative w-full">
       <div class="relative">
         <span class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-slate-500">
-          <mat-icon class="!text-lg">search</mat-icon>
+          <i class="fa-solid fa-magnifying-glass text-lg"></i>
         </span>
         <input
           type="text"

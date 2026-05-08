@@ -1,7 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ClientsService } from '../../core/services/clients.service';
 import { Client } from '../../core/models/client.model';
@@ -11,24 +9,26 @@ import { EmptyStateComponent } from '../../shared/ui/empty-state.component';
 import { ConfirmDialogComponent } from '../../shared/ui/confirm-dialog.component';
 import { EntityFormDialogComponent } from '../../shared/ui/entity-form.dialog';
 import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialog';
+import { buildResponsiveDialogConfig } from '../../shared/ui/dialog-config';
+import { AppDialogService } from '../../shared/ui/app-dialog.service';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatIconModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
+  imports: [CommonModule, PageHeaderComponent, StatCardComponent, EmptyStateComponent],
   host: { class: 'block w-full' },
   template: `
     <div class="space-y-6">
     <app-page-header title="Clientes" subtitle="Gestión de clientes con historial, citas y observaciones.">
       <button actions type="button" class="inline-flex h-11 items-center gap-2 rounded-2xl bg-violet-500 px-4 text-sm font-semibold text-white transition hover:bg-violet-400" (click)="openForm()">
-        <mat-icon>add</mat-icon>
+        <i class="fa-solid fa-plus"></i>
         Nuevo cliente
       </button>
     </app-page-header>
 
     <section class="grid gap-4 md:grid-cols-3">
-      <app-stat-card icon="people" label="Clientes" [value]="clients.clients().length" description="Base activa" />
-      <app-stat-card icon="history" label="Tatuajes realizados" [value]="clients.totalHistory()" description="Historial acumulado" badgeBackground="linear-gradient(135deg, #0ea5e9, #22c55e)" />
-      <app-stat-card icon="call" label="Contacto activo" [value]="contacts()" description="Email y teléfono disponibles" badgeBackground="linear-gradient(135deg, #7c3aed, #ec4899)" />
+      <app-stat-card icon="fa-solid fa-users" label="Clientes" [value]="clients.clients().length" description="Base activa" />
+      <app-stat-card icon="fa-solid fa-clock" label="Tatuajes realizados" [value]="clients.totalHistory()" description="Historial acumulado" badgeBackground="linear-gradient(135deg, #0ea5e9, #22c55e)" />
+      <app-stat-card icon="fa-solid fa-phone" label="Contacto activo" [value]="contacts()" description="Email y teléfono disponibles" badgeBackground="linear-gradient(135deg, #7c3aed, #ec4899)" />
     </section>
 
     <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6">
@@ -60,9 +60,9 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
               <p class="truncate text-sm text-slate-500">{{ client.email }}</p>
             </div>
             <div class="flex gap-2">
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(client)"><mat-icon class="!text-lg">visibility</mat-icon></button>
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(client)"><mat-icon class="!text-lg">edit</mat-icon></button>
-              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(client)"><mat-icon class="!text-lg">delete</mat-icon></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="detail(client)"><i class="fa-solid fa-eye text-lg"></i></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-slate-300 transition hover:bg-white/10" (click)="openForm(client)"><i class="fa-solid fa-pen text-lg"></i></button>
+              <button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-red-300 transition hover:bg-red-500/10" (click)="remove(client)"><i class="fa-solid fa-trash text-lg"></i></button>
             </div>
           </div>
 
@@ -80,14 +80,14 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
           <p class="mt-4 line-clamp-2 text-sm text-slate-400">{{ client.observaciones }}</p>
 
           <div class="mt-4 flex items-center gap-2 text-xs text-slate-500">
-            <mat-icon class="!text-base">phone</mat-icon>
+            <i class="fa-solid fa-phone text-base"></i>
             <span class="truncate">{{ client.telefono }}</span>
           </div>
         </article>
       </div>
 
       <div *ngIf="sorted().length === 0" class="mt-6">
-        <app-empty-state icon="people" title="Sin clientes" message="No se encontraron coincidencias."></app-empty-state>
+        <app-empty-state icon="fa-solid fa-users" title="Sin clientes" message="No se encontraron coincidencias."></app-empty-state>
       </div>
     </div>
     </div>
@@ -95,7 +95,7 @@ import { EntityDetailDialogComponent } from '../../shared/ui/entity-detail.dialo
 })
 export class ClientsPage {
   readonly clients = inject(ClientsService);
-  private readonly dialog = inject(MatDialog);
+  private readonly dialog = inject(AppDialogService);
   private readonly snack = inject(MatSnackBar);
   readonly query = signal('');
   readonly sortBy = signal<'nombre' | 'citas' | 'tatuajes'>('nombre');
@@ -118,7 +118,7 @@ export class ClientsPage {
 
   openForm(client?: Client) {
     const ref = this.dialog.open(EntityFormDialogComponent, {
-      width: '600px',
+      ...buildResponsiveDialogConfig('600px'),
       data: {
         title: client ? 'Editar cliente' : 'Nuevo cliente',
         subtitle: 'Gestiona los datos del cliente.',
@@ -140,7 +140,7 @@ export class ClientsPage {
 
   detail(client: Client) {
     this.dialog.open(EntityDetailDialogComponent, {
-      width: '500px',
+      ...buildResponsiveDialogConfig('500px'),
       data: {
         title: client.nombre,
         subtitle: client.email,
@@ -158,7 +158,7 @@ export class ClientsPage {
   remove(client: Client) {
     this.dialog
       .open(ConfirmDialogComponent, {
-        width: '400px',
+        ...buildResponsiveDialogConfig('400px'),
         data: { title: 'Eliminar cliente', message: `¿Eliminar a ${client.nombre}?`, confirmLabel: 'Eliminar', tone: 'danger' }
       })
       .afterClosed()
